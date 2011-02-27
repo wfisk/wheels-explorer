@@ -1,5 +1,7 @@
 <cfsetting enablecfoutputonly="true">
 <cfscript>
+
+
   //----------------------------------------------------------------
   // Parameters
   //----------------------------------------------------------------
@@ -19,7 +21,9 @@
   command = LCase( ListFirst( form.command, ' ' ) );
   message = '';
   newLine = Chr(13) & Chr(10);
-  pluginInstaller = CreateObject( 'component', 'PluginInstaller' ).init("whe");
+  pluginInstaller = CreateObject( 'component', 'PluginInstaller' ).init("wheelsexplorer");
+
+
 
    
   //----------------------------------------------------------------
@@ -36,6 +40,9 @@
       message = ArrayToList( pluginInstaller.getLog(), "<br />" );
       break;
   }
+
+  
+  
 </cfscript>
 <cfoutput>
   <cfinclude template="css.cfm">
@@ -45,6 +52,10 @@
     In order for Wheels Explorer to work, a small number of files will require
     to be copied from the plugins folder into your application folders.
     Click on <i>Install Embedded Files</i> to complete the installation.
+  </p>
+  
+  <p>
+    Once you've done that you can start the #linkTo( text="Wheels Explorer", controller="WheelsExplorer" )#.
   </p>
 
   <form action="#CGI.script_name & '?' & CGI.query_string#" method="post">

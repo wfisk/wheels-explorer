@@ -10,10 +10,17 @@ init
     
     $dir = StructNew();
     $dir.root = GetDirectoryFromPath( GetBaseTemplatePath() );
+    
+    // removing trailing slash
+    if ( Right( $dir.root, 1 ) is "/" ) {
+      $dir.root = Left( $dir.root, Len( $dir.root ) - 1 );  
+    } 
+    
+    
     $dir.controllers = $dir.root & "/controllers";
     $dir.javascripts = $dir.root & "/javascripts";
     $dir.models      = $dir.root & "/models";
-    $dir.plugin      = $dir.root & "/plugins/$pluginName";
+    $dir.plugin      = $dir.root & "/plugins/#$pluginName#";
     $dir.stylesheets = $dir.root & "/stylesheets";
     $dir.views       = $dir.root & "/views";
     
@@ -144,7 +151,7 @@ $installControllers
 ---------------------------------------------------------------------->
 <cffunction name="$installControllers" access="private" output="false">
   <cfscript>
-    $logMessage( "Installing Controllers" );
+    $logMessage( "<b>Installing Controllers</b>" );
     
     $installFiles(
       pluginDir    = "#$dir.plugin#/controllers",
@@ -153,8 +160,9 @@ $installControllers
       userTemplate = 
         "<cfcomponent extends=""##pluginName##"">" & $newLine &
         "</cfcomponent>" );
-      
+        
     $logMessage( "" );
+      
   </cfscript>
 </cffunction>
 
@@ -206,7 +214,7 @@ $installFiles
       pluginPath = "#arguments.pluginDir#/#pluginFile#";
       targetPath = "#arguments.targetDir#/#pluginFile#";
       $copyFile( pluginPath, targetPath );
-      $logMessage( "  " & targetPath );
+      $logMessage( "  " & targetPath & " installed" );
 
       // Create user file if user file does not exist
       userFile = REReplaceNoCase( pluginFile, "^(y_|_y)", "" );
@@ -219,7 +227,7 @@ $installFiles
         userCode = REReplaceNoCase( userCode, "##pluginFile##", pluginFile );
         userCode = REReplaceNoCase( userCode, "##pluginName##", pluginName );
         $saveToTextFile( userPath, userCode );
-        $logMessage( "  " & userPath );
+        $logMessage( "  " & userPath & " installed" );
       }
     }
   </cfscript>
@@ -231,15 +239,16 @@ $installJavascriptFiles
 ---------------------------------------------------------------------->
 <cffunction name="$installJavascriptFiles" access="private" output="false">
   <cfscript>
-    $logMessage( "Installing Javascript Files" );
+    $logMessage( "<b>Installing Javascript Files</b>" );
     
     $installFiles(
       pluginDir    = "#$dir.plugin#/javascripts",
       targetDir    = $dir.javascripts,
       filter       = "y_*.js",
       userTemplate = "// see ##pluginFile##" );
-      
+
     $logMessage( "" );
+      
   </cfscript>
 </cffunction>
 
@@ -249,7 +258,7 @@ $installModels
 ---------------------------------------------------------------------->
 <cffunction name="$installModels" access="private" output="false">
   <cfscript>
-    $logMessage( "Installing Models" );
+    $logMessage( "<b>Installing Models</b>" );
     
     $installFiles(
       pluginDir    = "#$dir.plugin#/models",
@@ -269,7 +278,7 @@ $installStylesheets
 ---------------------------------------------------------------------->
 <cffunction name="$installStylesheets" access="private" output="false">
   <cfscript>
-    $logMessage( "Installing Stylesheets" );
+    $logMessage( "<b>Installing Stylesheets</b>" );
     
     $installFiles(
       pluginDir    = "#$dir.plugin#/stylesheets",
@@ -278,6 +287,7 @@ $installStylesheets
       userTemplate = "/* see ##pluginFile## */" );
       
     $logMessage( "" );
+    
   </cfscript>
 </cffunction>
 
@@ -293,7 +303,7 @@ will install both views and partials
     var folderIndex = 0;
     var folders = "";
 
-    $logMessage( "Installing Views" );
+    $logMessage( "<b>Installing Views</b>" );
     
     folders = $directory(
       directory = "#$dir.plugin#/views",
@@ -316,13 +326,14 @@ will install both views and partials
 
       // Install Partials
       $installFiles(
-        pluginDir    = "#$dir.plugins#/insidehelp/views/#folder#",
+        pluginDir    = "#$dir.plugin#/views/#folder#",
         targetDir    = "#$dir.views#/#folder#",
         filter       = "_y_*.cfm",
         userTemplate = "<cfinclude template=""##pluginFile##"" />" );
     }
     
     $logMessage( "" );
+    
   </cfscript>
 </cffunction>
 
@@ -356,7 +367,7 @@ $removeControllers
 ---------------------------------------------------------------------->
 <cffunction name="$removeControllers" access="private" output="false">
   <cfscript>
-    $logMessage( "Removing Controllers" );
+    $logMessage( "<b>Removing Controllers</b>" );
     
     $removeFiles(
       pluginDir    = "#$dir.plugin#/controllers",
@@ -417,13 +428,12 @@ $removeFiles
         $logMessage( "  " & targetPath & " deleted." );
       }
 
-      // Remove user fle
+      // We cannot remove the user file so just write a message
       userFile = REReplaceNoCase( pluginFile, "^(y_|_y)", "" );
       userPath = "#arguments.targetDir#/#userFile#";
       
       if ( FileExists( userPath ) ) {
-        $deleteFile( userPath );
-        $logMessage( "  " & userPath & " deleted." );
+        $logMessage( "  Please manually delete " & userPath & "." );
       }
     }
   </cfscript>
@@ -433,9 +443,9 @@ $removeFiles
 <!---------------------------------------------------------------------
 $removeJavascriptFiles
 ---------------------------------------------------------------------->
-<cffunction name="removeJavascriptFiles" access="private" output="false">
+<cffunction name="$removeJavascriptFiles" access="private" output="false">
   <cfscript>
-    $logMessage( "Removing Javascript Files" );
+    $logMessage( "<b>Removing Javascript Files</b>" );
     
     $removeFiles(
       pluginDir    = "#$dir.plugin#/javascripts",
@@ -452,7 +462,7 @@ $removeModels
 ---------------------------------------------------------------------->
 <cffunction name="$removeModels" access="private" output="false">
   <cfscript>
-    $logMessage( "Removing Models" );
+    $logMessage( "<b>Removing Models</b>" );
     
     $removeFiles(
       pluginDir    = "#$dir.plugin#/models",
@@ -469,7 +479,7 @@ $removeStylesheets
 ---------------------------------------------------------------------->
 <cffunction name="$removeStylesheets" access="private" output="false">
   <cfscript>
-    $logMessage( "Removing Stylesheets" );
+    $logMessage( "<b>Removing Stylesheets</b>" );
     
     $removeFiles(
       pluginDir    = "#$dir.plugin#/stylesheets",
@@ -491,7 +501,7 @@ $removeViews
     var folderIndex = 0;
     var folders = "";
 
-    $logMessage( "Removing Views" );
+    $logMessage( "<b>Removing Views</b>" );
     
     folders = $directory(
       directory = "#$dir.plugin#/views",
@@ -514,7 +524,7 @@ $removeViews
 
       // Install Partials
       $installFiles(
-        pluginDir    = "#$dir.plugins#/insidehelp/views/#folder#",
+        pluginDir    = "#$dir.plugin#/views/#folder#",
         targetDir    = "#$dir.views#/#folder#",
         filter       = "_y_*.cfm",
         userTemplate = "<cfinclude template=""##pluginFile##"" />" );
