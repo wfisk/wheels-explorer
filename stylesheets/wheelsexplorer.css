@@ -1,0 +1,66 @@
+html body {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+
+}
+
+aside, article, 
+header,
+section { 
+  display: block; 
+}
+
+
+header[role=banner] {
+  height: 27px;
+  border-bottom: 1px solid blue;
+}
+
+nav[role=navigation] {
+  position: relative;
+  border-bottom: 1px solid blue;
+}
+
+nav[role=navigation] ul {
+  float: left;
+  list-style-type: none;
+  margin: 0;
+  padding: 4px 10px;
+}
+
+nav[role=navigation] li {
+  float: left;
+  padding-left: 0px;
+}
+
+nav[role=navigation] li a {
+  display: block;
+  padding-left: 4px;
+  padding-right: 4px;
+  text-decoration: none;
+}
+
+nav[role=navigation] li a:hover {
+  text-decoration: underline;
+}
+
+div[role=main] {
+  clear: both;
+}
+
+
+aside[role=complementary] {
+  float: left;  
+  width: 119px;
+}
+
+
+article[role=article] {
+  background-color: #ffeeee;
+  margin-left: 120px;
+  height: 100%;
+}  
